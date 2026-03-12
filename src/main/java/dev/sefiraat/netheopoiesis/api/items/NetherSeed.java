@@ -25,7 +25,6 @@ import dev.sefiraat.netheopoiesis.utils.StatisticUtils;
 import dev.sefiraat.netheopoiesis.utils.Theme;
 import dev.sefiraat.netheopoiesis.utils.WorldUtils;
 import io.github.bakedlibs.dough.items.CustomItemStack;
-import io.github.bakedlibs.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -33,6 +32,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
+import io.github.thebusybiscuit.slimefun4.utils.compatibility.VersionedPlayerHead;
 import io.papermc.lib.PaperLib;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
@@ -58,6 +58,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -220,7 +221,7 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
     @ParametersAreNonnullByDefault
     private void trySetChildSeed(Location motherLocation, Block cloneBlock, NetherSeed childSeed) {
         cloneBlock.setType(Material.PLAYER_HEAD);
-        PlayerHead.setSkin(cloneBlock, childSeed.getGrowthStages().get(0).getPlayerSkin(), false);
+        applySkullTexture(cloneBlock, childSeed.getGrowthStages().get(0));
         PaperLib.getBlockState(cloneBlock, false).getState().update(true, false);
         BlockStorage.store(cloneBlock, childSeed.getId());
         BlockStorage.addBlockInfo(cloneBlock, Keys.SEED_GROWTH_STAGE, "0");
@@ -291,11 +292,20 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
     public void updateGrowthStage(@Nonnull Block block, int growthStage) {
         if (block.getType() == Material.PLAYER_HEAD || block.getType() == Material.PLAYER_WALL_HEAD) {
             final Skulls nextTexture = getGrowthStages().get(growthStage - 1);
-            PlayerHead.setSkin(block, nextTexture.getPlayerSkin(), false);
+            applySkullTexture(block, nextTexture);
             PaperLib.getBlockState(block, false).getState().update(true, false);
             BlockStorage.addBlockInfo(block, Keys.SEED_GROWTH_STAGE, String.valueOf(growthStage));
             growthDisplay(block.getLocation());
         }
+    }
+
+    private void applySkullTexture(@Nonnull Block block, @Nonnull Skulls skull) {
+        VersionedPlayerHead.setSkinFromHash(
+            block,
+            UUID.nameUUIDFromBytes(skull.getHash().getBytes(StandardCharsets.UTF_8)),
+            skull.getHash(),
+            false
+        );
     }
 
     /**

@@ -1,13 +1,12 @@
 package dev.sefiraat.netheopoiesis.utils;
 
-import io.github.bakedlibs.dough.skins.PlayerHead;
-import io.github.bakedlibs.dough.skins.PlayerSkin;
+import io.github.thebusybiscuit.slimefun4.utils.compatibility.VersionedPlayerHead;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 
 /**
- * Stores the hashes for the skulls used in the addon with Methods for generating ItemStacks/Skins
+ * Stores the hashes for the skulls used in the addon with methods for generating textured heads.
  */
 public enum Skulls {
 
@@ -350,12 +349,7 @@ public enum Skulls {
 
     @Nonnull
     public ItemStack getPlayerHead() {
-        return PlayerHead.getItemStack(PlayerSkin.fromHashCode(hash));
-    }
-
-    @Nonnull
-    public PlayerSkin getPlayerSkin() {
-        return PlayerSkin.fromHashCode(hash);
+        return VersionedPlayerHead.getItemStack(VersionedPlayerHead.hashToBase64(hash));
     }
 
     @Nonnull
