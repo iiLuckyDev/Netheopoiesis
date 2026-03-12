@@ -123,9 +123,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.Slimefun</groupId>
-            <artifactId>Slimefun4</artifactId>
-            <version>RC-37</version>
+            <groupId>local.slimefun5</groupId>
+            <artifactId>Slimefun5</artifactId>
+            <version>5.0.3-local</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

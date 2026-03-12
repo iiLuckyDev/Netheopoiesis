@@ -27,6 +27,7 @@ import dev.sefiraat.netheopoiesis.implementation.tools.PurificationBarometer;
 import dev.sefiraat.netheopoiesis.implementation.tools.PurificationScanner;
 import dev.sefiraat.netheopoiesis.utils.EasterEggUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock;
@@ -45,6 +46,10 @@ public final class Items {
 
     private Items() {
         throw new IllegalStateException("Utility class");
+    }
+
+    private static ItemStack item(SlimefunItemStack stack) {
+        return stack.item();
     }
 
     public static void setup(Netheopoiesis addon) {
@@ -148,7 +153,7 @@ public final class Items {
             Stacks.ADDON_JAM,
             RecipeType.ORE_CRUSHER,
             new ItemStack[]{
-                Stacks.ADDON_BERRY
+                item(Stacks.ADDON_BERRY)
             }
         ).register(addon);
 
@@ -289,9 +294,9 @@ public final class Items {
             Stacks.ELEMENTAL_CRYSTAL,
             RecipeType.MAGIC_WORKBENCH,
             new ItemStack[]{
-                null, Stacks.HARMONISED_CRYSTAL_FIRE, null,
-                Stacks.HARMONISED_CRYSTAL_WATER, new ItemStack(Material.NETHER_STAR), Stacks.HARMONISED_CRYSTAL_EARTH,
-                null, Stacks.HARMONISED_CRYSTAL_AIR, null
+                null, item(Stacks.HARMONISED_CRYSTAL_FIRE), null,
+                item(Stacks.HARMONISED_CRYSTAL_WATER), new ItemStack(Material.NETHER_STAR), item(Stacks.HARMONISED_CRYSTAL_EARTH),
+                null, item(Stacks.HARMONISED_CRYSTAL_AIR), null
             }
         ).register(addon);
         
@@ -300,9 +305,9 @@ public final class Items {
             Stacks.VACUUM_CRYSTAL,
             RecipeType.MAGIC_WORKBENCH,
             new ItemStack[]{
-                null, Stacks.DISCORDANT_CRYSTAL_FIRE, null,
-                Stacks.DISCORDANT_CRYSTAL_WATER, Stacks.ELEMENTAL_CRYSTAL, Stacks.DISCORDANT_CRYSTAL_EARTH,
-                null, Stacks.DISCORDANT_CRYSTAL_AIR, null
+                null, item(Stacks.DISCORDANT_CRYSTAL_FIRE), null,
+                item(Stacks.DISCORDANT_CRYSTAL_WATER), item(Stacks.ELEMENTAL_CRYSTAL), item(Stacks.DISCORDANT_CRYSTAL_EARTH),
+                null, item(Stacks.DISCORDANT_CRYSTAL_AIR), null
             }
         ).register(addon);
         
@@ -311,9 +316,9 @@ public final class Items {
             Stacks.IRREGULAR_CRYSTAL,
             RecipeType.MAGIC_WORKBENCH,
             new ItemStack[]{
-                null, Stacks.DISSONANT_CRYSTAL_FIRE, null,
-                Stacks.DISSONANT_CRYSTAL_WATER, Stacks.VACUUM_CRYSTAL, Stacks.DISSONANT_CRYSTAL_EARTH,
-                null, Stacks.DISSONANT_CRYSTAL_AIR, null
+                null, item(Stacks.DISSONANT_CRYSTAL_FIRE), null,
+                item(Stacks.DISSONANT_CRYSTAL_WATER), item(Stacks.VACUUM_CRYSTAL), item(Stacks.DISSONANT_CRYSTAL_EARTH),
+                null, item(Stacks.DISSONANT_CRYSTAL_AIR), null
             }
         ).register(addon);
 
@@ -361,9 +366,9 @@ public final class Items {
             Stacks.PURIFICATION_BAROMETER,
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[]{
-                SlimefunItems.ZINC_INGOT, glass, SlimefunItems.ZINC_INGOT,
+                item(SlimefunItems.ZINC_INGOT), glass, item(SlimefunItems.ZINC_INGOT),
                 glass, redstone, glass,
-                SlimefunItems.ZINC_INGOT, glass, SlimefunItems.ZINC_INGOT,
+                item(SlimefunItems.ZINC_INGOT), glass, item(SlimefunItems.ZINC_INGOT),
             }
         ).register(addon);
 
@@ -372,9 +377,9 @@ public final class Items {
             Stacks.PURIFICATION_SCANNER,
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[]{
-                SlimefunItems.BILLON_INGOT, glass, SlimefunItems.BILLON_INGOT,
-                glass, Stacks.PURIFICATION_BAROMETER, glass,
-                SlimefunItems.BILLON_INGOT, glass, SlimefunItems.BILLON_INGOT,
+                item(SlimefunItems.BILLON_INGOT), glass, item(SlimefunItems.BILLON_INGOT),
+                glass, item(Stacks.PURIFICATION_BAROMETER), glass,
+                item(SlimefunItems.BILLON_INGOT), glass, item(SlimefunItems.BILLON_INGOT),
             }
         ).register(addon);
 
@@ -383,7 +388,7 @@ public final class Items {
             Stacks.CRUX_GATHERER,
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[]{
-                SlimefunItems.REINFORCED_ALLOY_INGOT, SlimefunItems.REINFORCED_ALLOY_INGOT, SlimefunItems.REINFORCED_ALLOY_INGOT,
+                item(SlimefunItems.REINFORCED_ALLOY_INGOT), item(SlimefunItems.REINFORCED_ALLOY_INGOT), item(SlimefunItems.REINFORCED_ALLOY_INGOT),
                 null, glass, null,
                 null, glass, null,
             }
@@ -395,8 +400,8 @@ public final class Items {
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[]{
                 null, quartz, null,
-                quartz, Stacks.HARVESTING_TOOL, quartz,
-                Stacks.SAINTLY_SEED, glass, Stacks.SAINTLY_SEED,
+                quartz, item(Stacks.HARVESTING_TOOL), quartz,
+                item(Stacks.SAINTLY_SEED), glass, item(Stacks.SAINTLY_SEED),
             },
             50
         ).register(addon);
@@ -407,7 +412,7 @@ public final class Items {
             RecipeType.ANCIENT_ALTAR,
             new ItemStack[]{
                 milkBucket, milkBucket, milkBucket,
-                Stacks.ADDON_JAM, Stacks.ADDON_JAM, Stacks.ADDON_JAM,
+                item(Stacks.ADDON_JAM), item(Stacks.ADDON_JAM), item(Stacks.ADDON_JAM),
                 wheat, wheat, wheat,
             }
         ).register(addon);
@@ -418,7 +423,7 @@ public final class Items {
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[] {
                 null, null, null,
-                null, Stacks.ELEMENTAL_CRYSTAL, null,
+                null, item(Stacks.ELEMENTAL_CRYSTAL), null,
                 null, new ItemStack(Material.BEACON), null
             },
             0,
@@ -432,8 +437,8 @@ public final class Items {
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[] {
                 null, null, null,
-                null, Stacks.ELEMENTAL_CRYSTAL, null,
-                null, Stacks.QUARTZ_BLANK, null
+                null, item(Stacks.ELEMENTAL_CRYSTAL), null,
+                null, item(Stacks.QUARTZ_BLANK), null
             },
             1,
             10,
@@ -446,8 +451,8 @@ public final class Items {
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[] {
                 null, null, null,
-                null, Stacks.VACUUM_CRYSTAL, null,
-                null, Stacks.QUARTZ_BLANK, null
+                null, item(Stacks.VACUUM_CRYSTAL), null,
+                null, item(Stacks.QUARTZ_BLANK), null
             },
             2,
             15,
@@ -460,8 +465,8 @@ public final class Items {
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[] {
                 null, null, null,
-                null, Stacks.IRREGULAR_CRYSTAL, null,
-                null, Stacks.QUARTZ_BLANK, null
+                null, item(Stacks.IRREGULAR_CRYSTAL), null,
+                null, item(Stacks.QUARTZ_BLANK), null
             },
             3,
             20,
@@ -473,9 +478,9 @@ public final class Items {
             Stacks.SEED_ANALYSER,
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[]{
-                SlimefunItems.DAMASCUS_STEEL_INGOT, glass, SlimefunItems.DAMASCUS_STEEL_INGOT,
-                SlimefunItems.BRASS_INGOT, glass, SlimefunItems.BRASS_INGOT,
-                SlimefunItems.DAMASCUS_STEEL_INGOT, redstone, SlimefunItems.DAMASCUS_STEEL_INGOT,
+                item(SlimefunItems.DAMASCUS_STEEL_INGOT), glass, item(SlimefunItems.DAMASCUS_STEEL_INGOT),
+                item(SlimefunItems.BRASS_INGOT), glass, item(SlimefunItems.BRASS_INGOT),
+                item(SlimefunItems.DAMASCUS_STEEL_INGOT), redstone, item(SlimefunItems.DAMASCUS_STEEL_INGOT),
             },
             Set.of(
                 Analyser.AnalyserType.SEED
@@ -487,9 +492,9 @@ public final class Items {
             Stacks.SIPHON_ANALYSER,
             RecipeType.ENHANCED_CRAFTING_TABLE,
             new ItemStack[]{
-                SlimefunItems.REINFORCED_ALLOY_INGOT, glass, SlimefunItems.REINFORCED_ALLOY_INGOT,
-                SlimefunItems.BRASS_INGOT, Stacks.SEED_ANALYSER, SlimefunItems.BRASS_INGOT,
-                SlimefunItems.REINFORCED_ALLOY_INGOT, redstone, SlimefunItems.REINFORCED_ALLOY_INGOT,
+                item(SlimefunItems.REINFORCED_ALLOY_INGOT), glass, item(SlimefunItems.REINFORCED_ALLOY_INGOT),
+                item(SlimefunItems.BRASS_INGOT), item(Stacks.SEED_ANALYSER), item(SlimefunItems.BRASS_INGOT),
+                item(SlimefunItems.REINFORCED_ALLOY_INGOT), redstone, item(SlimefunItems.REINFORCED_ALLOY_INGOT),
             },
             Set.of(
                 Analyser.AnalyserType.SIPHON
@@ -898,7 +903,7 @@ public final class Items {
             .tryRegister(addon);
 
         new HarvestableSeed(Stacks.ADDON_BERRY_SEED)
-            .setHarvestingResult(Stacks.ADDON_BERRY)
+            .setHarvestingResult(item(Stacks.ADDON_BERRY))
             .setGrowth(new Growth(GrowthStages.SPIKEY_RED, Placements.NETHER_DIRT_AND_UP, 10, 0.2))
             .addBreedingPair(Stacks.SAINTLY_SEED.getItemId(), Stacks.SAINTLY_SEED.getItemId(), 0.1, 0.15)
             .addFlavourProfile(16, 0, 0, 0, 0)

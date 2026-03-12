@@ -7,6 +7,7 @@ import dev.sefiraat.netheopoiesis.listeners.DropListener;
 import dev.sefiraat.netheopoiesis.utils.Keys;
 import dev.sefiraat.netheopoiesis.utils.Theme;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import org.bukkit.Material;
@@ -144,6 +145,14 @@ public final class RecipeTypes {
         };
     }
 
+    @Nonnull
+    public static ItemStack[] createWorldDropRecipe(@Nonnull SlimefunItemStack stackToDrop,
+                                                    @Nonnull ItemStack dropFrom,
+                                                    double dropChance
+    ) {
+        return createWorldDropRecipe(stackToDrop.item(), dropFrom, dropChance);
+    }
+
     /**
      * This method returns an ItemStack array that can be used for Slimefun's recipe system.
      *
@@ -173,7 +182,7 @@ public final class RecipeTypes {
      */
     @Nonnull
     public static ItemStack[] createTradingRecipe(@Nonnull ItemStack itemStack, @Nonnull NetheoBalls ball, int minFlavour) {
-        final ItemStack flavourStack = new CustomItemStack(
+        final ItemStack flavourStack = CustomItemStack.create(
             Material.MELON_SEEDS,
             Theme.MAIN.apply("Required Flavour"),
             Theme.CLICK_INFO.asTitle("Netheoball Type", ball.getSlimefunItemStack().getDisplayName()),
@@ -185,5 +194,13 @@ public final class RecipeTypes {
             null, flavourStack, null,
             null, null, null
         };
+    }
+
+    @Nonnull
+    public static ItemStack[] createTradingRecipe(@Nonnull SlimefunItemStack itemStack,
+                                                  @Nonnull NetheoBalls ball,
+                                                  int minFlavour
+    ) {
+        return createTradingRecipe(itemStack.item(), ball, minFlavour);
     }
 }

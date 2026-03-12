@@ -2,6 +2,7 @@ package dev.sefiraat.netheopoiesis.api.plant.netheos;
 
 import dev.sefiraat.netheopoiesis.Registry;
 import dev.sefiraat.netheopoiesis.implementation.netheos.NetheoBall;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet;
 import org.bukkit.Material;
@@ -324,6 +325,10 @@ public class TradePool {
         this.trades.add(trade, 1);
         Registry.getInstance().addTrade(trade);
         return this;
+    }
+
+    public TradePool addTrade(@Nonnull SlimefunItemStack itemStack, int requiredFlavour) {
+        return addTrade(itemStack.item(), requiredFlavour);
     }
 
     @Nonnull

@@ -453,7 +453,7 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
             Theme.CLICK_INFO.asTitle("Bitter", this.flavourProfile.getBitter()),
             Theme.CLICK_INFO.asTitle("Umami", this.flavourProfile.getUmami())
         );
-        this.crushingDrop = stack;
+        this.crushingDrop = stack.item();
 
         final Paste paste = new Paste(
             Groups.PASTES,

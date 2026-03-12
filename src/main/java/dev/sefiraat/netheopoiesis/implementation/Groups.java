@@ -23,7 +23,7 @@ public final class Groups {
 
     public static final MainFlexGroup MAIN = new MainFlexGroup(
         Keys.newKey("main"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.WITHER_ROSE),
             Theme.MAIN.color("Netheopoiesis")
         )
@@ -31,7 +31,7 @@ public final class Groups {
 
     public static final DummyItemGroup CRAFTING = new DummyItemGroup(
         Keys.newKey("crafting"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.STICK),
             Theme.MAIN.color("Netheopoiesis Crafting Items")
         )
@@ -39,7 +39,7 @@ public final class Groups {
 
     public static final DummyItemGroup TOOLS = new DummyItemGroup(
         Keys.newKey("tools"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.COMPASS),
             Theme.MAIN.color("Netheopoiesis Tools")
         )
@@ -47,7 +47,7 @@ public final class Groups {
 
     public static final DummyItemGroup SEEDS = new DummyItemGroup(
         Keys.newKey("seeds"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.MELON_SEEDS),
             Theme.MAIN.color("Netheopoiesis Seeds")
         )
@@ -55,7 +55,7 @@ public final class Groups {
 
     public static final DummyItemGroup PASTES = new DummyItemGroup(
         Keys.newKey("pastes"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.GLOWSTONE_DUST),
             Theme.MAIN.color("Netheopoiesis Seed Pastes")
         )
@@ -63,7 +63,7 @@ public final class Groups {
 
     public static final DummyItemGroup BALLS = new DummyItemGroup(
         Keys.newKey("netheo-balls"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.SNOWBALL),
             Theme.MAIN.color("Netheopoiesis Netheo Balls")
         )
@@ -71,7 +71,7 @@ public final class Groups {
 
     public static final DummyItemGroup CRUX = new DummyItemGroup(
         Keys.newKey("crux"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.MYCELIUM),
             Theme.MAIN.color("Netheopoiesis Crux'")
         )
@@ -79,7 +79,7 @@ public final class Groups {
 
     public static final DiscoveriesFlexGroup DISCOVERIES = new DiscoveriesFlexGroup(
         Keys.newKey("discoveries"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.WHEAT_SEEDS),
             Theme.MAIN.color("Breeding Discoveries")
         )
@@ -87,7 +87,7 @@ public final class Groups {
 
     public static final TradesFlexGroup TRADES = new TradesFlexGroup(
         Keys.newKey("trades"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.GOLD_INGOT),
             Theme.MAIN.color("Wandering Piglin Trades")
         )
@@ -95,7 +95,7 @@ public final class Groups {
 
     public static final PurificationFlexGroup GUIDE = new PurificationFlexGroup(
         Keys.newKey("guide"),
-        new CustomItemStack(
+        CustomItemStack.create(
             new ItemStack(Material.BOOKSHELF),
             Theme.MAIN.color("Purification Information")
         )

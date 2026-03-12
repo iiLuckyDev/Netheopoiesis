@@ -91,7 +91,7 @@ public class MixingQuartz extends LimitedUseItem {
             }
 
             // Get the itemstack then add the flavour volume to the PDC, line to the lore
-            final ItemStack stack = ball.getSlimefunItemStack().clone();
+            final ItemStack stack = ball.getSlimefunItemStack().item().clone();
             final ItemMeta itemMeta = stack.getItemMeta();
             final List<String> lore = itemMeta.getLore();
             // Set PDC
