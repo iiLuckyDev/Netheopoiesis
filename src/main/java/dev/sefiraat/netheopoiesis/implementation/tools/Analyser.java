@@ -56,7 +56,7 @@ public class Analyser extends SlimefunItem {
             }
 
             if (ItemStackUtils.isOnCooldown(analyser)) {
-                player.sendMessage(Theme.WARNING + "This item is still on cooldown.");
+                player.sendMessage(Theme.WARNING + "Ready in " + ItemStackUtils.getCooldownSeconds(analyser) + "s.");
                 return;
             }
 
@@ -66,6 +66,9 @@ public class Analyser extends SlimefunItem {
                 onUseSeed(block, plant, player);
             } else if (slimefunItem instanceof BeaconSiphoningBlock siphon && types.contains(AnalyserType.SIPHON)) {
                 onUseSiphon(block, siphon, player);
+            } else {
+                player.sendMessage(Theme.WARNING + "Use this analyser on a compatible plant or siphon.");
+                return;
             }
 
             // Put item on cooldown to minimise potential BlockStorage spamming
@@ -77,12 +80,31 @@ public class Analyser extends SlimefunItem {
     private void onUseSeed(Block block, NetherSeed plant, Player player) {
         final String growthStage = BlockStorage.getLocationInfo(block.getLocation(), Keys.SEED_GROWTH_STAGE);
         final String ownerString = BlockStorage.getLocationInfo(block.getLocation(), Keys.BLOCK_OWNER);
-        final UUID uuid = UUID.fromString(ownerString);
-        final OfflinePlayer ownerPlayer = Bukkit.getOfflinePlayer(uuid);
+        String ownerName = "Unknown owner";
+        if (ownerString != null) {
+            try {
+                final OfflinePlayer ownerPlayer = Bukkit.getOfflinePlayer(UUID.fromString(ownerString));
+                if (ownerPlayer.getName() != null) {
+                    ownerName = ownerPlayer.getName();
+                }
+            } catch (IllegalArgumentException ignored) {
+                // Older plant data may not contain a valid owner UUID.
+            }
+        }
+        String progress = "Unknown";
+        if (growthStage != null) {
+            try {
+                int stage = Integer.parseInt(growthStage);
+                int total = plant.getGrowthStages().stages();
+                progress = stage >= total ? "Fully grown" : "Growing: " + Math.max(0, stage) + "/" + total;
+            } catch (NumberFormatException ignored) {
+                // Keep the reading usable when growth data is malformed.
+            }
+        }
 
         final String messageType = Theme.CLICK_INFO.asTitle("Seed Type", plant.getItemName());
-        final String messageStage = Theme.CLICK_INFO.asTitle("Growth Stage", growthStage);
-        final String messageOwner = Theme.CLICK_INFO.asTitle("Owner", ownerPlayer.getName());
+        final String messageStage = Theme.CLICK_INFO.asTitle("Growth", progress);
+        final String messageOwner = Theme.CLICK_INFO.asTitle("Owner", ownerName);
         final String messageValue = Theme.CLICK_INFO.asTitle(
             "Purification Value",
             plant.getPurificationValue()

@@ -407,6 +407,11 @@ public class NetheoBalls {
         return null;
     }
 
+    @Nonnull
+    public static Set<NetheoBalls> getCachedValues() {
+        return CACHED_VALUES;
+    }
+
     public static void setup() {
         // todo This class needs to be instantiated, need the right way to do this
     }

@@ -41,6 +41,7 @@ public class CrystallineCrux extends NetherCrux {
     );
 
     private static final Set<BlockFace> VALID_FACES = Set.of(
+        BlockFace.UP,
         BlockFace.DOWN,
         BlockFace.NORTH,
         BlockFace.SOUTH,
@@ -87,11 +88,9 @@ public class CrystallineCrux extends NetherCrux {
     // Todo - Work on performance here
     private void onTick(@Nonnull Block block) {
         final int stepsLeft = getRemainingSteps(block);
-        // If no steps left, kill off the block to stop ticking
-        if (stepsLeft == 0) {
-            block.setType(Material.WATER, true);
-            BlockStorage.clearBlockInfo(block);
-            Purification.removeValue(block);
+        // At the spread boundary, wait for nearby lava before releasing water.
+        if (stepsLeft <= 0) {
+            tryTransformToWater(block);
             return;
         }
 
@@ -104,24 +103,29 @@ public class CrystallineCrux extends NetherCrux {
 
                 canTransform = false;
                 if (chance <= required) {
-                    BlockStorage.clearBlockInfo(testBlock);
-                    Purification.removeValue(testBlock);
-                    // Schedule a task to ensure the new block storage happens only AFTER deletion
-                    final UpdateCruxTask task = new UpdateCruxTask(
+                    UpdateCruxTask.schedule(
                         testBlock,
                         Stacks.CRYSTALLINE_CRUX,
                         stepsLeft - 1
                     );
-                    task.runTaskTimer(Netheopoiesis.getInstance(), 1, 20);
                 }
             }
         }
         // We can only transform when there is no lava around, to stop turning to cobble
         if (canTransform) {
-            block.setType(Material.WATER, true);
-            BlockStorage.clearBlockInfo(block);
-            Purification.removeValue(block);
+            tryTransformToWater(block);
         }
+    }
+
+    private void tryTransformToWater(@Nonnull Block block) {
+        for (BlockFace face : VALID_FACES) {
+            if (block.getRelative(face).getType() == Material.LAVA) {
+                return;
+            }
+        }
+        block.setType(Material.WATER, true);
+        BlockStorage.clearBlockInfo(block);
+        Purification.removeValue(block);
     }
 
     public void setRemainingSteps(@Nonnull Block block, int steps) {

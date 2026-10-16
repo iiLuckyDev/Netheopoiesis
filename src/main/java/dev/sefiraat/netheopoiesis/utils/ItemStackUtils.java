@@ -145,6 +145,11 @@ public final class ItemStackUtils {
         return isOnCooldown(itemMeta);
     }
 
+    public static long getCooldownSeconds(@Nonnull ItemStack itemStack) {
+        long until = PersistentDataAPI.getLong(itemStack.getItemMeta(), Keys.COOLDOWN, 0);
+        return Math.max(0, (until - System.currentTimeMillis() + 999) / 1000);
+    }
+
     /**
      * Checks if the item has a cooldown time and returns if it has not yet expired
      * or false if it doesn't have a matching cooldown

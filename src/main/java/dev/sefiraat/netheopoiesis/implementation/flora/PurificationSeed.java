@@ -83,11 +83,7 @@ public class PurificationSeed extends NetherSeed {
                 // Event cancelled - lets not spread
                 return;
             }
-            BlockStorage.clearBlockInfo(block);
-            Purification.removeValue(block);
-            // Schedule a task to ensure the new block storage happens only AFTER deletion
-            UpdateCruxTask task = new UpdateCruxTask(block, Stacks.BASIC_PURIFIED_NETHERRACK);
-            task.runTaskTimer(Netheopoiesis.getInstance(), 1, 20);
+            UpdateCruxTask.schedule(block, Stacks.BASIC_PURIFIED_NETHERRACK, -1);
         }
     }
 

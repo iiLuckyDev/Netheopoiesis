@@ -1,5 +1,14 @@
+# Netheopoiesis config-version: 4
+config-version: 4
+
 auto-update: true
 debug-messages: false
+options:
+  addon-researches: false
+items:
+  ender-cake:
+    # Exact loaded End world name. Multiverse must load it before the cake is used.
+    end-world: End
 spawning:
   player-cap-water-ambient: 15
   player-cap-water-animal: 5

@@ -1,9 +1,11 @@
 package dev.sefiraat.netheopoiesis.implementation.tools;
 
 import dev.sefiraat.netheopoiesis.Purification;
+import dev.sefiraat.netheopoiesis.Netheopoiesis;
 import dev.sefiraat.netheopoiesis.implementation.Stacks;
 import dev.sefiraat.netheopoiesis.utils.ParticleUtils;
 import dev.sefiraat.netheopoiesis.utils.WorldUtils;
+import dev.sefiraat.netheopoiesis.utils.Theme;
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -61,7 +63,12 @@ public class EnderCake extends SlimefunItem {
         final Player player = event.getPlayer();
         final Optional<Block> clickedBlock = event.getClickedBlock();
 
-        if (!WorldUtils.inNether(player.getWorld()) || clickedBlock.isEmpty()) {
+        if (clickedBlock.isEmpty()) {
+            return;
+        }
+        if (!WorldUtils.inNether(player.getWorld())) {
+            event.cancel();
+            player.sendMessage(Theme.WARNING + "Ender Cake can only be used in the Nether.");
             return;
         }
 
@@ -70,14 +77,35 @@ public class EnderCake extends SlimefunItem {
             final Optional<SlimefunItem> slimefunItem = event.getSlimefunBlock();
             if (slimefunItem.isPresent()
                 && slimefunItem.get().getId().equals(Stacks.ENDER_CAKE.getItemId())
-                && Bukkit.getAllowEnd()
             ) {
-                final World end = Bukkit.getWorlds().get(2);
+                if (!Bukkit.getAllowEnd()) {
+                    event.cancel();
+                    player.sendMessage(Theme.WARNING + "End travel is disabled on this server.");
+                    return;
+                }
+                final String worldName = Netheopoiesis.getInstance().getConfig()
+                    .getString("items.ender-cake.end-world", "End");
+                final World end = Bukkit.getWorld(worldName);
+                if (end == null || end.getEnvironment() != World.Environment.THE_END) {
+                    event.cancel();
+                    player.sendMessage(Theme.WARNING + "Ender Cake destination is unavailable. Please contact an admin.");
+                    Netheopoiesis.logWarning("Ender Cake destination '" + worldName
+                        + "' is missing or is not an End world. Check items.ender-cake.end-world.");
+                    return;
+                }
                 final Location location = player.getLocation();
-                if (end != null && Purification.getValue(location.getChunk()) >= Purification.ENDER_CAKE) {
+                final int purification = Purification.getValue(location.getChunk());
+                if (purification < Purification.ENDER_CAKE) {
+                    event.cancel();
+                    player.sendMessage(Theme.WARNING + "Ender Cake needs " + Purification.ENDER_CAKE
+                        + " purification here. Current: " + purification + " ("
+                        + (Purification.ENDER_CAKE - purification) + " more needed).");
+                    return;
+                }
+                if (purification >= Purification.ENDER_CAKE) {
                     // optimize where possible. look into checking if its already there. Trusted source unknown.
                     final Location endSpawn = new Location(end, 100.5, 49, 0.5);
-                    location.getChunk().load();
+                    endSpawn.getChunk().load();
                     placePlatform(end);
                     player.teleport(endSpawn);
                 }
@@ -102,8 +130,10 @@ public class EnderCake extends SlimefunItem {
     }
 
     private void tryPlaceBlock(@Nonnull Block block) {
-        if (block.getY() == 48 && block.getType() != Material.OBSIDIAN) {
-            block.setType(Material.OBSIDIAN);
+        if (block.getY() == 48) {
+            if (block.getType() != Material.OBSIDIAN) {
+                block.setType(Material.OBSIDIAN);
+            }
         } else if (!block.getType().isAir()) {
             block.setType(Material.AIR);
         }

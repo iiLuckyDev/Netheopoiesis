@@ -44,7 +44,7 @@ public class PurificationScanner extends SlimefunItem {
             final ItemStack analyser = event.getItem();
 
             if (ItemStackUtils.isOnCooldown(analyser)) {
-                player.sendMessage(Theme.WARNING + "This item is still on cooldown.");
+                player.sendMessage(Theme.WARNING + "Ready in " + ItemStackUtils.getCooldownSeconds(analyser) + "s.");
                 return;
             }
 
@@ -58,6 +58,9 @@ public class PurificationScanner extends SlimefunItem {
                     object.getPurificationValue()
                 );
                 player.sendMessage(messageValue);
+            } else {
+                player.sendMessage(Theme.WARNING + "No purification reading available for this block.");
+                return;
             }
             // Put item on cooldown to minimise potential BlockStorage spamming
             ItemStackUtils.addCooldown(analyser, 5);

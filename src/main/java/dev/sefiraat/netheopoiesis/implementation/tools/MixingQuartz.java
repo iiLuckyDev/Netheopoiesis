@@ -14,6 +14,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.LimitedUseItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -35,7 +36,7 @@ import java.util.regex.Pattern;
 public class MixingQuartz extends LimitedUseItem {
 
     private static final NamespacedKey KEY = Keys.newKey("uses");
-    private static final Pattern LORE_FLAVOUR = Pattern.compile(Theme.CLICK_INFO + "Flavour: [0-9]+");
+    private static final Pattern LORE_FLAVOUR = Pattern.compile("Flavour: [0-9]+");
 
     public MixingQuartz(ItemGroup group,
                         SlimefunItemStack item,
@@ -99,7 +100,7 @@ public class MixingQuartz extends LimitedUseItem {
             // Scan lore for the flavour line and replace
             for (int i = 0; i < lore.size(); i++) {
                 final String string = lore.get(i);
-                if (LORE_FLAVOUR.matcher(string).matches()) {
+                if (LORE_FLAVOUR.matcher(ChatColor.stripColor(string)).matches()) {
                     lore.set(i, Theme.CLICK_INFO.asTitle("Flavour", volume));
                 }
             }
@@ -113,6 +114,10 @@ public class MixingQuartz extends LimitedUseItem {
                 item.getItemStack().setAmount(item.getItemStack().getAmount() - 1);
             }
             damageItem(player, event.getItem());
+            player.sendMessage(Theme.CLICK_INFO + "Mixed a " + ball.getName() + ".");
+        } else {
+            player.sendMessage(Theme.WARNING + "Found " + flavours.size()
+                + "/3 nearby paste drops. Drop three pastes separately and aim at them.");
         }
     }
 

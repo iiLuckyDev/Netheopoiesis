@@ -76,12 +76,9 @@ public class CruxSpreadingSeed extends NetherSeed implements SpreadingPlant {
                 // Event cancelled - lets not spread
                 return;
             }
-            BlockStorage.clearBlockInfo(block);
-            Purification.removeValue(block);
-            // Schedule a task to ensure the new block storage happens only AFTER deletion
-            UpdateCruxTask task = new UpdateCruxTask(block, convertTo);
-            task.runTaskTimer(Netheopoiesis.getInstance(), 1, 20);
-            afterSpread(sourceLocation, seed, data, block);
+            if (UpdateCruxTask.schedule(block, convertTo, -1)) {
+                afterSpread(sourceLocation, seed, data, block);
+            }
         }
     }
 

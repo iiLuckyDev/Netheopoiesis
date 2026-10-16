@@ -155,6 +155,13 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
     @ParametersAreNonnullByDefault
     private void onTick(Block block, NetherSeed seed, Config data) {
         final Location location = block.getLocation();
+        if (block.getType() != Material.PLAYER_HEAD && block.getType() != Material.PLAYER_WALL_HEAD) {
+            ownerCache.remove(location);
+            return;
+        }
+        if (findOwner(location) == null) {
+            return;
+        }
         int growthStage = Integer.parseInt(data.getString(Keys.SEED_GROWTH_STAGE));
         onTickAlways(location, seed, data);
         if (growthStage >= getGrowthStages().stages()) {
@@ -226,6 +233,7 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
         BlockStorage.store(cloneBlock, childSeed.getId());
         BlockStorage.addBlockInfo(cloneBlock, Keys.SEED_GROWTH_STAGE, "0");
         BlockStorage.addBlockInfo(cloneBlock, Keys.BLOCK_OWNER, getOwner(motherLocation).toString());
+        childSeed.addOwner(cloneBlock.getLocation(), getOwner(motherLocation));
         breedSuccess(cloneBlock.getLocation());
     }
 
@@ -241,11 +249,7 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
 
             @Override
             public void newInstance(@Nonnull BlockMenu menu, @Nonnull Block block) {
-                final String ownerUuidString = BlockStorage.getLocationInfo(block.getLocation(), Keys.BLOCK_OWNER);
-                if (ownerUuidString != null) {
-                    final UUID ownerUuid = UUID.fromString(ownerUuidString);
-                    addOwner(block.getLocation(), ownerUuid);
-                }
+                findOwner(block.getLocation());
             }
 
             @Override
@@ -262,9 +266,26 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
 
     @Nonnull
     public UUID getOwner(@Nonnull Location location) {
-        UUID uuid = ownerCache.get(location);
-        // Owner cannot be null if called correctly
+        UUID uuid = findOwner(location);
         Preconditions.checkNotNull(uuid, "Owner is null, has this been called correctly");
+        return uuid;
+    }
+
+    @Nullable
+    private UUID findOwner(@Nonnull Location location) {
+        UUID uuid = ownerCache.get(location);
+        if (uuid == null) {
+            // Tickers can run before a block menu restores the owner cache.
+            final String storedOwner = BlockStorage.getLocationInfo(location, Keys.BLOCK_OWNER);
+            if (storedOwner != null) {
+                try {
+                    uuid = UUID.fromString(storedOwner);
+                    addOwner(location, uuid);
+                } catch (IllegalArgumentException ignored) {
+                    return null;
+                }
+            }
+        }
         return uuid;
     }
 
@@ -332,6 +353,15 @@ public abstract class NetherSeed extends SlimefunItem implements NetherPlant, Se
         }
         // Wasn't placable, so cancel the event
         event.setCancelled(true);
+        if (!WorldUtils.inNether(block.getWorld())) {
+            event.getPlayer().sendMessage(Theme.WARNING + "This seed must be planted in the Nether.");
+        } else {
+            String ground = getPlacements().stream().sorted().map(id -> {
+                SlimefunItem crux = SlimefunItem.getById(id);
+                return crux == null ? id : ChatColor.stripColor(crux.getItemName());
+            }).collect(java.util.stream.Collectors.joining(", "));
+            event.getPlayer().sendMessage(Theme.WARNING + "Plant this seed on: " + ground + ".");
+        }
     }
 
     /**

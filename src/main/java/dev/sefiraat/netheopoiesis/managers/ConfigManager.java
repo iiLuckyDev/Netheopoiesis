@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * This class is used to create and manage/save custom configuration files
@@ -38,30 +42,54 @@ public class ConfigManager {
 
         final Reader reader = new InputStreamReader(inputStream);
         final FileConfiguration resourceConfig = YamlConfiguration.loadConfiguration(reader);
-        final FileConfiguration existingConfig = YamlConfiguration.loadConfiguration(existingFile);
 
-        for (String key : resourceConfig.getKeys(false)) {
-            checkKey(existingConfig, resourceConfig, key);
+        if (!existingFile.exists()) {
+            plugin.saveResource("config.yml", false);
+            return;
         }
 
+        final FileConfiguration existingConfig = YamlConfiguration.loadConfiguration(existingFile);
+
+        int resourceVersion = resourceConfig.getInt("config-version", 1);
+        int existingVersion = existingConfig.getInt("config-version", 1);
+
+        boolean changed = existingVersion != resourceVersion;
+        for (String key : resourceConfig.getKeys(false)) {
+            changed |= checkKey(existingConfig, resourceConfig, key);
+        }
+        if (!changed) {
+            plugin.reloadConfig();
+            return;
+        }
         try {
+            backupConfig(plugin, existingFile, existingVersion, resourceVersion);
+            existingConfig.set("config-version", resourceVersion);
+            existingConfig.options().header("Netheopoiesis config-version: " + resourceVersion);
             existingConfig.save(existingFile);
+            plugin.reloadConfig();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Could not back up and update config.yml", e);
         }
     }
 
     @ParametersAreNonnullByDefault
-    private void checkKey(FileConfiguration existingConfig, FileConfiguration resourceConfig, String key) {
+    private boolean checkKey(FileConfiguration existingConfig, FileConfiguration resourceConfig, String key) {
         final Object currentValue = existingConfig.get(key);
         final Object newValue = resourceConfig.get(key);
         if (newValue instanceof ConfigurationSection section) {
-            for (String sectionKey : section.getKeys(false)) {
-                checkKey(existingConfig, resourceConfig, key + "." + sectionKey);
+            if (currentValue != null && !(currentValue instanceof ConfigurationSection)) {
+                return false;
             }
+            boolean changed = false;
+            for (String sectionKey : section.getKeys(false)) {
+                changed |= checkKey(existingConfig, resourceConfig, key + "." + sectionKey);
+            }
+            return changed;
         } else if (currentValue == null) {
             existingConfig.set(key, newValue);
+            return true;
         }
+        return false;
     }
 
     @Nonnull
@@ -107,6 +135,10 @@ public class ConfigManager {
         return Netheopoiesis.getInstance().getConfig().getBoolean("debug-messages");
     }
 
+    public boolean areResearchesEnabled() {
+        return Netheopoiesis.getInstance().getConfig().getBoolean("options.addon-researches", false);
+    }
+
     public int getPlayerMobCapWaterAmbient() {
         return Netheopoiesis.getInstance().getConfig().getInt("spawning.player-cap-water-ambient");
     }
@@ -141,5 +173,21 @@ public class ConfigManager {
 
     public int getPlayerMobCapWanderingTrader() {
         return Netheopoiesis.getInstance().getConfig().getInt("spawning.player-cap-wandering-trader");
+    }
+
+    private void backupConfig(Netheopoiesis plugin,
+                                          File existingFile,
+                                          int existingVersion,
+                                          int resourceVersion
+    ) throws IOException {
+            File backupDir = new File(plugin.getDataFolder(), "config-backups");
+            if (!backupDir.exists()) {
+                Files.createDirectories(backupDir.toPath());
+            }
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS"));
+            String backupName = "config-v" + existingVersion + "-to-v" + resourceVersion + "-" + timestamp + ".yml";
+            File backupFile = new File(backupDir, backupName);
+            Files.copy(existingFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }

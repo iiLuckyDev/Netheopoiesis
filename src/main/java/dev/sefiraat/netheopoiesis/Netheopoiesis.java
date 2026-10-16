@@ -2,6 +2,7 @@ package dev.sefiraat.netheopoiesis;
 
 import dev.sefiraat.netheopoiesis.api.plant.netheos.NetheoBalls;
 import dev.sefiraat.netheopoiesis.implementation.Items;
+import dev.sefiraat.netheopoiesis.implementation.Researches;
 import dev.sefiraat.netheopoiesis.managers.ConfigManager;
 import dev.sefiraat.netheopoiesis.managers.DispatchManager;
 import dev.sefiraat.netheopoiesis.managers.ListenerManager;
@@ -67,6 +68,11 @@ public class Netheopoiesis extends JavaPlugin implements SlimefunAddon {
 
         Items.setup(this);
         NetheoBalls.setup();
+        if (configManager.areResearchesEnabled()) {
+            Researches.setup();
+        } else {
+            getLogger().info("Addon researches are disabled via config.yml.");
+        }
 
         setupStats();
     }
